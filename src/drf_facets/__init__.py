@@ -9,11 +9,12 @@ __email__ = "your.email@example.com"
 default_app_config = "drf_facets.apps.DrfFacetsConfig"
 
 # Import main components for easy access
-from .apps import DrfFacetsConfig
+from drf_facets.apps import DrfFacetsConfig
+
 
 __all__ = [
-    "__version__",
+    "DrfFacetsConfig",
     "__author__",
     "__email__",
-    "DrfFacetsConfig",
-] 
+    "__version__",
+]

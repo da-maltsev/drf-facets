@@ -31,3 +31,4 @@ venv/
 .pyenv/
 lcov.info
 cert.*
+uv.lock

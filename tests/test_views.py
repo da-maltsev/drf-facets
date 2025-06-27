@@ -12,11 +12,11 @@ from drf_facets.models import ExampleModel
 
 class ExampleModelViewSetTestCase(TestCase):
     """Test cases for ExampleModelViewSet."""
-    
-    def setUp(self):
+
+    def setUp(self) -> None:
         """Set up test data and client."""
         self.client = APIClient()
-        
+
         # Create test examples
         self.example1 = ExampleModel.objects.create(
             name="Active Example",
@@ -33,32 +33,32 @@ class ExampleModelViewSetTestCase(TestCase):
             description="Another active example",
             is_active=True,
         )
-    
-    def test_list_examples(self):
+
+    def test_list_examples(self) -> None:
         """Test listing all examples."""
         url = reverse("example-list")
         response = self.client.get(url)
-        
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data["results"]), 3)
-        
+
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data["results"]) == 3
+
         # Check that results are ordered by created_at descending
         names = [item["name"] for item in response.data["results"]]
-        self.assertEqual(names[0], "Another Active Example")
-        self.assertEqual(names[1], "Inactive Example")
-        self.assertEqual(names[2], "Active Example")
-    
-    def test_retrieve_example(self):
+        assert names[0] == "Another Active Example"
+        assert names[1] == "Inactive Example"
+        assert names[2] == "Active Example"
+
+    def test_retrieve_example(self) -> None:
         """Test retrieving a single example."""
         url = reverse("example-detail", args=[self.example1.id])
         response = self.client.get(url)
-        
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["name"], "Active Example")
-        self.assertEqual(response.data["description"], "An active example")
-        self.assertTrue(response.data["is_active"])
-    
-    def test_create_example(self):
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["name"] == "Active Example"
+        assert response.data["description"] == "An active example"
+        assert response.data["is_active"]
+
+    def test_create_example(self) -> None:
         """Test creating a new example."""
         url = reverse("example-list")
         data = {
@@ -67,16 +67,16 @@ class ExampleModelViewSetTestCase(TestCase):
             "is_active": True,
         }
         response = self.client.post(url, data, format="json")
-        
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data["name"], "New Example")
-        self.assertEqual(response.data["description"], "A new example")
-        self.assertTrue(response.data["is_active"])
-        
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert response.data["name"] == "New Example"
+        assert response.data["description"] == "A new example"
+        assert response.data["is_active"]
+
         # Check that the example was actually created
-        self.assertTrue(ExampleModel.objects.filter(name="New Example").exists())
-    
-    def test_update_example(self):
+        assert ExampleModel.objects.filter(name="New Example").exists()
+
+    def test_update_example(self) -> None:
         """Test updating an existing example."""
         url = reverse("example-detail", args=[self.example1.id])
         data = {
@@ -85,101 +85,101 @@ class ExampleModelViewSetTestCase(TestCase):
             "is_active": False,
         }
         response = self.client.put(url, data, format="json")
-        
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["name"], "Updated Example")
-        self.assertEqual(response.data["description"], "An updated example")
-        self.assertFalse(response.data["is_active"])
-        
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["name"] == "Updated Example"
+        assert response.data["description"] == "An updated example"
+        assert not response.data["is_active"]
+
         # Check that the example was actually updated
         self.example1.refresh_from_db()
-        self.assertEqual(self.example1.name, "Updated Example")
-    
-    def test_partial_update_example(self):
+        assert self.example1.name == "Updated Example"
+
+    def test_partial_update_example(self) -> None:
         """Test partially updating an existing example."""
         url = reverse("example-detail", args=[self.example1.id])
         data = {"name": "Partially Updated Example"}
         response = self.client.patch(url, data, format="json")
-        
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["name"], "Partially Updated Example")
-        self.assertEqual(response.data["description"], "An active example")  # Unchanged
-        self.assertTrue(response.data["is_active"])  # Unchanged
-    
-    def test_delete_example(self):
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["name"] == "Partially Updated Example"
+        assert response.data["description"] == "An active example"  # Unchanged
+        assert response.data["is_active"]  # Unchanged
+
+    def test_delete_example(self) -> None:
         """Test deleting an example."""
         url = reverse("example-detail", args=[self.example1.id])
         response = self.client.delete(url)
-        
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+
         # Check that the example was actually deleted
-        self.assertFalse(ExampleModel.objects.filter(id=self.example1.id).exists())
-    
-    def test_filter_by_active_status(self):
+        assert not ExampleModel.objects.filter(id=self.example1.id).exists()
+
+    def test_filter_by_active_status(self) -> None:
         """Test filtering examples by active status."""
         url = reverse("example-list")
         response = self.client.get(url, {"is_active": "true"})
-        
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data["results"]), 2)
-        
+
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data["results"]) == 2
+
         # Check that only active examples are returned
         for item in response.data["results"]:
-            self.assertTrue(item["is_active"])
-    
-    def test_filter_by_name(self):
+            assert item["is_active"]
+
+    def test_filter_by_name(self) -> None:
         """Test filtering examples by name."""
         url = reverse("example-list")
         response = self.client.get(url, {"name": "Active"})
-        
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data["results"]), 2)
-        
+
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data["results"]) == 2
+
         # Check that only examples with "Active" in the name are returned
         for item in response.data["results"]:
-            self.assertIn("Active", item["name"])
-    
-    def test_active_action(self):
+            assert "Active" in item["name"]
+
+    def test_active_action(self) -> None:
         """Test the active action endpoint."""
         url = reverse("example-active")
         response = self.client.get(url)
-        
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 2)
-        
+
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data) == 2
+
         # Check that only active examples are returned
         for item in response.data:
-            self.assertTrue(item["is_active"])
-    
-    def test_toggle_active_action(self):
+            assert item["is_active"]
+
+    def test_toggle_active_action(self) -> None:
         """Test the toggle_active action endpoint."""
         url = reverse("example-toggle-active", args=[self.example1.id])
         response = self.client.post(url)
-        
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertFalse(response.data["is_active"])
-        
+
+        assert response.status_code == status.HTTP_200_OK
+        assert not response.data["is_active"]
+
         # Check that the example was actually updated
         self.example1.refresh_from_db()
-        self.assertFalse(self.example1.is_active)
-        
+        assert not self.example1.is_active
+
         # Toggle again
         response = self.client.post(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue(response.data["is_active"])
-    
-    def test_stats_action(self):
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["is_active"]
+
+    def test_stats_action(self) -> None:
         """Test the stats action endpoint."""
         url = reverse("example-stats")
         response = self.client.get(url)
-        
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["total"], 3)
-        self.assertEqual(response.data["active"], 2)
-        self.assertEqual(response.data["inactive"], 1)
-    
-    def test_validation_error(self):
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["total"] == 3
+        assert response.data["active"] == 2
+        assert response.data["inactive"] == 1
+
+    def test_validation_error(self) -> None:
         """Test that validation errors are properly handled."""
         url = reverse("example-list")
         data = {
@@ -188,6 +188,6 @@ class ExampleModelViewSetTestCase(TestCase):
             "is_active": True,
         }
         response = self.client.post(url, data, format="json")
-        
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("name", response.data) 
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "name" in response.data
