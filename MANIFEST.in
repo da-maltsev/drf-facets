@@ -1,0 +1,17 @@
+include README.md
+include LICENSE
+include MANIFEST.in
+include pyproject.toml
+
+recursive-include src *.py
+recursive-include tests *.py
+
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude __pycache__
+global-exclude .DS_Store
+global-exclude .git*
+global-exclude .coverage
+global-exclude htmlcov/
+global-exclude .pytest_cache/
+global-exclude .mypy_cache/ 
