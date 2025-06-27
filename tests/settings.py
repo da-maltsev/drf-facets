@@ -9,6 +9,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# This is a test key for use in tests only, not for production.
 SECRET_KEY = "django-insecure-test-key-for-drf-facets-package"
 
 # SECURITY WARNING: don't run with debug turned on in production!

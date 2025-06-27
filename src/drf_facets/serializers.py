@@ -7,6 +7,9 @@ from rest_framework import serializers
 from drf_facets.models import ExampleModel
 
 
+MIN_NAME_LENGTH = 2
+
+
 class ExampleModelSerializer(serializers.ModelSerializer):
     """
     Serializer for ExampleModel.
@@ -40,9 +43,9 @@ class ExampleModelSerializer(serializers.ModelSerializer):
             serializers.ValidationError: If the name is invalid
 
         """
-        if len(value.strip()) < 2:
+        if len(value.strip()) < MIN_NAME_LENGTH:
             raise serializers.ValidationError(
-                "Name must be at least 2 characters long."
+                f"Name must be at least {MIN_NAME_LENGTH} characters long."
             )
         return value.strip()
 

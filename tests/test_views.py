@@ -10,6 +10,10 @@ from rest_framework.test import APIClient
 from drf_facets.models import ExampleModel
 
 
+TOTAL_EXAMPLES = 3
+ACTIVE_EXAMPLES = 2
+
+
 class ExampleModelViewSetTestCase(TestCase):
     """Test cases for ExampleModelViewSet."""
 
@@ -40,7 +44,7 @@ class ExampleModelViewSetTestCase(TestCase):
         response = self.client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data["results"]) == 3
+        assert len(response.data["results"]) == TOTAL_EXAMPLES
 
         # Check that results are ordered by created_at descending
         names = [item["name"] for item in response.data["results"]]
@@ -122,7 +126,7 @@ class ExampleModelViewSetTestCase(TestCase):
         response = self.client.get(url, {"is_active": "true"})
 
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data["results"]) == 2
+        assert len(response.data["results"]) == ACTIVE_EXAMPLES
 
         # Check that only active examples are returned
         for item in response.data["results"]:
@@ -134,7 +138,7 @@ class ExampleModelViewSetTestCase(TestCase):
         response = self.client.get(url, {"name": "Active"})
 
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data["results"]) == 2
+        assert len(response.data["results"]) == ACTIVE_EXAMPLES
 
         # Check that only examples with "Active" in the name are returned
         for item in response.data["results"]:
@@ -146,7 +150,7 @@ class ExampleModelViewSetTestCase(TestCase):
         response = self.client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 2
+        assert len(response.data) == ACTIVE_EXAMPLES
 
         # Check that only active examples are returned
         for item in response.data:
@@ -175,9 +179,9 @@ class ExampleModelViewSetTestCase(TestCase):
         response = self.client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
-        assert response.data["total"] == 3
-        assert response.data["active"] == 2
-        assert response.data["inactive"] == 1
+        assert response.data["total"] == TOTAL_EXAMPLES
+        assert response.data["active"] == ACTIVE_EXAMPLES
+        assert response.data["inactive"] == TOTAL_EXAMPLES - ACTIVE_EXAMPLES
 
     def test_validation_error(self) -> None:
         """Test that validation errors are properly handled."""

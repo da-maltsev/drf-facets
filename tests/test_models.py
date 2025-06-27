@@ -2,6 +2,8 @@
 Tests for DRF Facets models.
 """
 
+import time
+
 from django.test import TestCase
 from django.utils import timezone
 
@@ -79,8 +81,6 @@ class ExampleModelTestCase(TestCase):
         original_updated_at = self.example.updated_at
 
         # Wait a bit to ensure timestamp difference
-        import time
-
         time.sleep(0.001)
 
         # Update the model

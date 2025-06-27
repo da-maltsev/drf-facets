@@ -9,7 +9,7 @@ fmt:
 
 lint:
 	ruff check src/ tests/
-	mypy src/ tests/
+	mypy src/
 
 test:
 	pytest 

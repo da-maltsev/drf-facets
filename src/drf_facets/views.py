@@ -2,8 +2,11 @@
 Views for DRF Facets package.
 """
 
-from rest_framework import viewsets
+from typing import Any
+
+from rest_framework import serializers, viewsets
 from rest_framework.decorators import action
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from drf_facets.models import ExampleModel
@@ -20,7 +23,7 @@ class ExampleModelViewSet(viewsets.ModelViewSet):
     queryset = ExampleModel.objects.all()
     serializer_class = ExampleModelSerializer
 
-    def get_serializer_class(self):
+    def get_serializer_class(self) -> type[serializers.ModelSerializer]:
         """
         Return appropriate serializer class based on the action.
 
@@ -32,7 +35,7 @@ class ExampleModelViewSet(viewsets.ModelViewSet):
             return ExampleModelListSerializer
         return ExampleModelSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> Any:
         """
         Filter queryset based on query parameters.
 
@@ -55,7 +58,7 @@ class ExampleModelViewSet(viewsets.ModelViewSet):
         return queryset
 
     @action(detail=False, methods=["get"])
-    def active(self, request):
+    def active(self, request: Request) -> Response:
         """
         Get only active ExampleModel instances.
 
@@ -68,7 +71,7 @@ class ExampleModelViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(detail=True, methods=["post"])
-    def toggle_active(self, request, pk=None):
+    def toggle_active(self, request: Request, pk: int | None = None) -> Response:
         """
         Toggle the active status of an ExampleModel instance.
 
@@ -88,7 +91,7 @@ class ExampleModelViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(detail=False, methods=["get"])
-    def stats(self, request):
+    def stats(self, request: Request) -> Response:
         """
         Get statistics about ExampleModel instances.
 
